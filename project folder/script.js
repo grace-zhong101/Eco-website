@@ -191,13 +191,16 @@ function loadScene(scene) {
         resolveending();
         return;
     }
+
     const current = gameData[scene];
     if (!current) return;
+
     typeText(current.text);
+
     const choicesDiv = document.getElementById("choices");
     choicesDiv.innerHTML = "";
 
-    current.choices.forEach(choice =>{
+    current.choices.forEach(choice => {
         const button = document.createElement("button");
         button.innerText = choice.text;
         button.onclick = () => {
