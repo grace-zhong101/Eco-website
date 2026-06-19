@@ -1,9 +1,9 @@
 let pollution = 0;
-let energy = 0;
+let energy = 100;
 let achievements = [];
 let inventory = [];
 
-const enconterChance = 0.3;
+const encounterChance = 0.3;
 
 const randomEncounters = [
 {
@@ -118,10 +118,14 @@ const gameData = {
     },
     nowater: {
         text: "fate has been decided there is no changing it now!",
-        choices: {
-            text: "reveal outcome",
-            next: "ending"
-        }
+        choices: [
+            { 
+                text: "reveal outcome",
+                next: "ending"
+            }
+        ]
+           
+    
     },
     ending: {
         text: "",
@@ -169,18 +173,18 @@ function triggerRandomEncounter(nextScene) {
     encounter.choices.forEach(choice => {
         const button = document.createElement("button");
         button.innerText = choice.text;
-        button.oneclick = () => {
+        button.onclick = () => {
             choice.result();
             updateUI();
             loadScene(nextScene);
         };
-        choicesDive.appendChild(button);
+        choicesDiv.appendChild(button);
     });
 }
 function resolveending() {
     const hasBottle = inventory.includes("reusable water bottle");
     const scene = hasBottle ? "survival" : "death";
-    leadScene(scene);
+    loadScene(scene);
 }
 function loadScene(scene) {
     if (scene === "ending") {
