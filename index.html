@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Eco Choice Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    
+    <h2 id="story"></h2>
+    <div id="choices"></div>
+    
+    <script>
+        const gameData = {
+            start: {
+                text: "you've just finished feed the ducks the last bit of your sandwich. Do you know throw the wrapper on the ground or walk around for 2 hours to look for a trash can?",
+                choices: [
+                    { text: "throw the wrapper on the ground", next: "pollution"} ,
+                    { text: "walk around for 2 hours", next: "trashcan"}
+                ]
+
+                
+            },
+            pollution: {
+                text: "you threw the wrapper on the ground and a duck came and eat it. The duck choked and died. You are a terrible person.",
+                choices: [
+                    { text: "continue", next: "mayberedemtion"}
+                ]   
+            },
+            trashcan: {
+            text: "you after a long long walk found a trash can. The environment stays  bit cleaner.",
+            choices: [
+                { text: "continue", next: "moreenvironmentsaving"}
+            ]
+        },
+        mayberedemtion: {
+            text: "the duck starts to chocked and you simply walk away not realizing you caused this. Terrible person fr.",
+            choices: [
+                { text: "continue", next: "keepwalking"}
+            ]
+        },
+        moreenvironmentsaving: {
+            text: "you walk off tired, you just walked around for 2 hours just to find a trash can of course you're tired.",
+            choices: [
+                { text: "continue", next: "wanderaround"}
+            ]
+        },
+        wanderaround: {
+            text: "you now walk around you think about if you want to walk or ride a bike back",
+            choices: [
+                { text: "walk", next: "longwalk"},
+                { text: "ride a bike", next: "end"}
+            ]
+        },
+        longwalk: {
+            text: "walking you run into a small group of stray kittens (so cute!) you stop and ponder on petting them.",
+            choices: [
+                { text: "pet the cat", next: "detor"},
+                { text: "keep walking", next: "catwalking"}
+            ]
+        },
+        detor: {
+            text: "you stop and pet the cat's head, the cat purrs happily!",
+            choices: [
+                { text: "leave", next: "journeyend"}
+            ]
+        },
+        journeyend: {
+            text: "finally, now it's dark out and you've made it back to the subway(probably faster the bike but whatever...), now it's time to head home",
+            choices: []
+        },
+        catwalking: {
+            text: "you keep walking, worried about rabies you decend from the scene.",
+            chocies: [
+                { text: "continue", next:journeyend}
+            ]
+            
+        },
+        keepwalking: {
+            text: "you watch as the ducks now for some reason seem very warry of you. How odd.",
+            choices: [
+                { text: "continue", next: "duckend"}
+            ]
+        },
+        end: {
+            text: "you after just and hour bike ride (wow you're fit) reach the subway where you venture down and start heading home. But you also know need to figure out where you're gonna put the bike",
+            choices: [
+                { text: "leave bike in the middle of the park.", next: "parkbike"},
+                { text: "find a bike rack and leave it there.", next: "bikerack"}
+            ]
+        },
+        bikerack: {
+            text: "you find a bike rack and leave your bike there, you know it's the right thing to do.",
+            choices: [
+                { text: "continue", next: "realgoodend"}
+            ]
+        },
+        realgoodend: {
+            text: "you now leave for the station content on your good deeds!",
+            choices:[]
+        },
+        parkbike: {
+            text: "you leave the bike in the middle of the park, you know it's not the best idea but you just don't care.",
+            choices: [
+                { text: "continue", next: "endish"}
+            ]
+        },
+        endish: {
+            text: "the bike you left is actually right next to a duck's nest, the duck scared off by the sudden object decides to abandon the nest, and it's eggs. While you leave for the subway unaware.",
+            choices: []
+        },
+        duckend: {
+            text: "you noitce the ducks are ciricling around like and very very strange storm.",
+            choices: [
+                { text: "continue", next: "storm"}  
+            ]
+        },
+        storm: {
+            text: "the ducks decend and start to peck at you violently, how dare yoy betray little jonny who choked on your wrapper.",
+            choices: []
+        }
+       
+        }
+    
+    </script>
+</body>
+</html>
+<audio id="clickSound" src="click.mp3"></audio> play a bit of guitar and upload this yeeee
+<div id="meter">
+    <div id="fill"></div>
+</div>
+<script src="script.js"></script>
+<div id="ui">
+    <div class="bar">
+        <label>Pollution</label>
+        <div id="meter">
+            <div id="pollutionFill"></div>
+        </div>
+    </div>
+    <div class="bar">
+        <label>Energy</label>
+        <div class="meter">
+            <div id="energyFill"></div>
+        </div>
+    </div>
+</div> 
