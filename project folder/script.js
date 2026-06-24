@@ -1,64 +1,64 @@
 let pollution = 0;
 let energy = 100;
-let achievements = [];
 let inventory = [];
 
 const encounterChance = 0.3;
 
 const randomEncounters = [
-{
-    text: "You find a duck tangled in plastic.",
-    choices: [
     {
-        text: "help the duck",
-        result: () => {
-            pollution -=10;
-            energy -= 10;
-        }
+        text: "You find a duck tangled in plastic.",
+        choices: [
+            {
+                text: "help the duck",
+                result: () => {
+                    pollution = Math.max(0, pollution - 10);
+                    energy -= 10;
+                }
+            },
+            {
+                text: "Ignore it",
+                    result: () => {
+                    pollution += 15;
+                }
+            }
+      
+        ]
     },
     {
-        text: "Ignore it",
-        result: () => {
-            pollution += 15;
-        }
+        text: "A volunteer offers free resuable water bottles.",
+        choices: [
+            {
+                text: "take one",
+                result: () => {
+                    if (!inventory.includes("reusable water bottle")) {
+                    inventory.push("reusable water bottle");
+                    }
+                }
+            },
+            {
+                text: "no thanks",
+                result: () =>{}
+            }
+        ]
+    },
+    {
+        text: "A heatwave rolls through the city park",
+        choices: [
+            {
+                text: "push forward",
+                result: () => {
+                    energy -= 15;
+                }
+            },
+            {
+                text: "rest in shade",
+                result: () => {
+                    energy -=5;
+                    pollution += 5;
+                }
+            }
+        ]
     }
-      
-
-    ]
-},
-{
-    text: "A volunteer offers free resuable water bottles.",
-    choices: [
-        {
-            text: "take one",
-            result: () => {
-                inventory.push("reusable water bottle")
-            }
-        },
-        {
-            text: "no thanks",
-            result: () =>{}
-        }
-    ]
-},
-{
-    text: "A heatwave rolls through the city park",
-    choices: [
-        {
-            text: "push forward",
-            result: () => {
-                energy -= 15;
-            }
-        },
-        {
-            text: "rest in shade",
-            result: () => {
-                energy -=5;
-                pollution += 5;
-            }
-        }
-    ]
-}
 ];
 
 const gameData = {
@@ -130,70 +130,76 @@ const gameData = {
     ending: {
         text: "",
         choices: []
+    },
+    survival: {
+        text: "A reusable bottle gives you just enought water to survive.",
+        choices: [{ text: "restart", next: "start"}]
+    },
+    death: {
+        text:" there is no water left, surviving is impossible",
+        choices: [{ text: "restart", next: "start"}]
     }
 };
 
 function typeText(text) {
     const story = document.getElementById("story");
     story.innerText = "";
-    let i = 0;
 
+    let i = 0;
     const interval = setInterval(() => {
         story.innerText += text.charAt(i);
         i++;
-        if (i >= text.length) {
-            clearInterval(interval);
-        }
+        if (i >= text.length) clearInterval(interval);  
     }, 23);
 }
 
-function updateUI() {
+ function updateUI() {
     pollution = Math.max(0, Math.min(100, pollution));
     energy = Math.max(0, Math.min(100, energy));
+
     document.getElementById("pollutionFill").style.width = pollution + "%";
     document.getElementById("energyFill").style.width = energy + "%";
     document.getElementById("inventory").innerText =
-        "Inventory: " + (inventory.length ? inventory.join(",") : "Empty");
-    saveGame();
+        "Inventory: " + (inventory.length ? inventory.join(", ") : "Empty");
 }
-function saveGame() {
-    localStorage.setItem("pollution", pollution);
-    localStorage.setItem("energy", energy);
-}
-function loadGame() {
-    pollution = Number(localStorage.getItem("pollution")) || 0;
-    energy = Number(localStorage.getItem("energy")) || 100;
+function resolveending() {
+    const hasBottle = inventory.includes("reusable water bottle");
+   loadScene(hasBottle ? "survival" : "death");
 }
 function triggerRandomEncounter(nextScene) {
-    const encounter =
-        randomEncounters[Math.floor(Math.random() * randomEncounters.length)];
-    document.getElementById("story").innerText = encounter.text;
+    const encounter = randomEncounters[Math.floor(Math.random() * randomEncounters.length)];
+
+    const story = document.getElementById("story");
     const choicesDiv = document.getElementById("choices");
-    choicesDiv.innerHTML = "";
+
+    story.innderText = encounter.text;
+    choicesDiv.innderHTML = "";
+
     encounter.choices.forEach(choice => {
-        const button = document.createElement("button");
-        button.innerText = choice.text;
-        button.onclick = () => {
+        const btn = document.createElement("button");
+        btn.innerText = choice.text;
+
+        btn.onclick = () => {
             choice.result();
             updateUI();
             loadScene(nextScene);
         };
-        choicesDiv.appendChild(button);
+
+        choicesDiv.appendChild(btn);
     });
 }
-function resolveending() {
-    const hasBottle = inventory.includes("reusable water bottle");
-    const scene = hasBottle ? "survival" : "death";
-    loadScene(scene);
-}
+
 function loadScene(scene) {
     if (scene === "ending") {
         resolveending();
         return;
     }
 
-    const current = gameData[scene];
-    if (!current) return;
+const current = gameData[scene];
+    if (!current) {
+        console.error("Missing Scene:", scene);
+        return;
+    }
 
     typeText(current.text);
 
@@ -201,32 +207,24 @@ function loadScene(scene) {
     choicesDiv.innerHTML = "";
 
     current.choices.forEach(choice => {
-        const button = document.createElement("button");
-        button.innerText = choice.text;
-        button.onclick = () => {
+        const btn = document.createElement("button");
+        btn.innerText = choice.text;
+
+        btn.onclick = () => {
             if (choice.effect) {
-                pollution += choice.effect.pollution;
-                energy += choice.effect.energy;
+                pollution += choice.effect.pollution || 0;
+                energy += choice.effect.energy || 0;
             }
+
             updateUI();
             if (Math.random() < encounterChance) {
                 triggerRandomEncounter(choice.next);
             } else {
-                loadScene(choice.next);
+                loeadScene(choice.next);
             }
         };
-        choicesDiv.appendChild(button);
     });
 }
-gameData.survival = {
-    text: "losing hope, suddenly, you find the reusable water bottle you collected a few months ago. The waters a bit strange, but it's good enough to survive.",
-    choices: [{ text: "restart", next: "start"}]
-};
-gameData.death = {
-    text: "you reach the crushing conclusion that theres no water left with your supplies",
-    choices: [{ text: "restart", next: "start"}]
-}
 
-loadGame();
-updateUI();
 loadScene("start");
+updateUI();
